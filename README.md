@@ -1,4 +1,4 @@
-# godot_debugger_kz
+# godot_3.5_debugger_kz
 a debugger that allows you to track in which file and line a `console.out([]);` function was used  
 
 ## How To Use
