@@ -1,0 +1,161 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends WindowDialog
+
+
+var Json = preload(\"res://addons/h/json.gd\")
+var kz_signal: kzJson
+
+
+func _init():
+	
+	#print(\"Debugger init\")
+	#updates will be written here
+	kz_signal = Json.new(\"res://addons/h/json/signal.json\")
+	
+	
+func obj_to_str(obj: Dictionary) -> String:
+
+	var result = \"{\"
+	
+	for key in obj.keys():
+		var value = obj[key]
+		
+		# Recursively convert nested dictionaries
+		if value is Dictionary:
+			value = obj_to_str(value)
+		
+		# Recursively convert arrays/lists
+		elif value is Array:
+			for i in range(value.size()):
+				if value[i] is Dictionary:
+					value[i] = obj_to_str(value[i])
+		
+		if key is String:
+			var p: JSONParseResult = JSON.parse(str(value))
+			#print(JSON.print(p.result))
+			#print(p.result is Dictionary, p.result is Object)
+			if p.result is Dictionary or value is Array:
+				result += '\"%s\": %s, ' % [key, (value)]
+			else:
+				result += '\"%s\": \"%s\", ' % [key, (value)]
+		else:
+			var p: JSONParseResult = JSON.parse(str(value))
+			#print(JSON.print(p.result))
+			#print(p.result is Dictionary, p.result is Object)
+			if p.result is Dictionary or value is Array:
+				result += '%s: %s, ' % [key, str(value)]
+			else:
+				result += '%s: \"%s\", ' % [key, (value)]
+				
+	# Remove the trailing comma and space, if any
+	if result.length() > 1:
+		result = result.substr(0, result.length() - 2)
+	
+	result += \"}\"
+	
+	return result
+
+
+func out(array_errors: Array):
+	
+	for array in array_errors:
+		var index = array_errors.find(array)
+		if array is Dictionary:
+			array_errors[index] = obj_to_str(array)
+	
+	# get line number
+	var stack = get_stack();	#printt(\"stack\", stack)
+	var obj = stack[1]
+	var call_line = obj.line
+	
+	# get called script name
+	var script_src: String = obj.source
+	var startIndex = script_src.rfind(\"/\")
+	var script_name = script_src.substr(startIndex +1)
+	
+	var _expected_script_infos = \"-> \\t ({0}:{1})\".format([script_name, call_line])
+
+	var script_infos: String = \"[color=#ff6969]([url={0}]{1}[/url]:{2})[/color]\"
+	
+	
+	var link = script_src + \":\" + str(call_line)
+	script_infos = script_infos.format([link, script_name, call_line])
+	
+	var obj_errors = {
+		\"array_errors\": array_errors, 
+		\"call_line\": call_line,
+		\"script_name\": script_name,
+		\"script_src\": script_src,
+	}
+	
+	#print(\"out\", obj_errors)
+	# send object to plugin using json file and timer that looks for new data
+	kz_signal.array_append(obj_errors)
+
+
+"
+
+[node name="WindowDialog" type="WindowDialog"]
+pause_mode = 2
+margin_left = 12.0
+margin_top = 25.0
+margin_right = 512.0
+margin_bottom = 225.0
+rect_min_size = Vector2( 500, 200 )
+resizable = true
+script = SubResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="topBarCol" type="ColorRect" parent="."]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 496.0
+margin_bottom = 29.0
+rect_min_size = Vector2( 492, 25 )
+color = Color( 0.6, 0.6, 0.6, 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 496.0
+margin_bottom = 29.0
+rect_min_size = Vector2( 492, 25 )
+alignment = 2
+
+[node name="clear" type="Button" parent="HBoxContainer"]
+margin_left = 441.0
+margin_right = 492.0
+margin_bottom = 25.0
+text = "CLEAR"
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 29.0
+margin_right = 496.0
+margin_bottom = 196.0
+rect_min_size = Vector2( 492, 167 )
+color = Color( 0.0588235, 0.0588235, 0.0588235, 1 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+margin_left = 5.0
+margin_top = 29.0
+margin_right = 497.0
+margin_bottom = 196.0
+rect_min_size = Vector2( 492, 167 )
+focus_mode = 2
+bbcode_enabled = true
+bbcode_text = "[center][color=gray]---- kzCode_ Debugger ----[/color][/center]
+"
+text = "---- kzCode_ Debugger ----
+"
+selection_enabled = true
+override_selected_font_color = true
+
+[connection signal="pressed" from="HBoxContainer/clear" to="." method="_on_clear_pressed"]
+[connection signal="meta_clicked" from="RichTextLabel" to="." method="_on_RichTextLabel_meta_clicked"]

@@ -1,0 +1,97 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/kz_debugger/assets/heart_1_size-removebg-preview.png" type="Texture" id=1]
+[ext_resource path="res://addons/kz_debugger/assets/refresh.png" type="Texture" id=2]
+[ext_resource path="res://addons/kz_debugger/dock/debug_dock.gd" type="Script" id=3]
+
+[node name="WindowDialog" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 288.0
+margin_top = 801.0
+margin_right = -461.0
+margin_bottom = 401.0
+rect_min_size = Vector2( 275, 200 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="topBarCol" type="ColorRect" parent="."]
+margin_right = 275.0
+margin_bottom = 25.0
+color = Color( 0.8, 0.819608, 0.784314, 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 275.0
+margin_bottom = 25.0
+alignment = 2
+
+[node name="sponsor" type="TextureButton" parent="HBoxContainer"]
+margin_left = 17.0
+margin_right = 41.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 24, 24 )
+texture_normal = ExtResource( 1 )
+expand = true
+
+[node name="refresh" type="TextureButton" parent="HBoxContainer"]
+margin_left = 45.0
+margin_right = 69.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 24, 24 )
+texture_normal = ExtResource( 2 )
+expand = true
+
+[node name="dock" type="Button" parent="HBoxContainer"]
+margin_left = 73.0
+margin_right = 122.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 25, 25 )
+text = "DOCK"
+
+[node name="options" type="Button" parent="HBoxContainer"]
+margin_left = 126.0
+margin_right = 197.0
+margin_bottom = 25.0
+text = "OPTIONS"
+
+[node name="clear" type="Button" parent="HBoxContainer"]
+margin_left = 201.0
+margin_right = 252.0
+margin_bottom = 25.0
+text = "CLEAR"
+
+[node name="quit" type="Button" parent="HBoxContainer"]
+margin_left = 256.0
+margin_right = 275.0
+margin_bottom = 25.0
+text = "x"
+
+[node name="text_bg_color" type="ColorRect" parent="."]
+margin_top = 25.0
+margin_right = 275.0
+margin_bottom = 200.0
+color = Color( 0.0588235, 0.0588235, 0.0588235, 1 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+margin_top = 25.0
+margin_right = 275.0
+margin_bottom = 200.0
+focus_mode = 2
+bbcode_enabled = true
+bbcode_text = "[center][color=gray]---- kzCode_ Debugger ----[/color][/center]
+"
+text = "---- kzCode_ Debugger ----
+"
+scroll_following = true
+selection_enabled = true
+override_selected_font_color = true
+
+[connection signal="pressed" from="HBoxContainer/sponsor" to="." method="_on_sponsor_pressed"]
+[connection signal="pressed" from="HBoxContainer/refresh" to="." method="_on_refresh_pressed"]
+[connection signal="pressed" from="HBoxContainer/dock" to="." method="_on_dock_pressed"]
+[connection signal="pressed" from="HBoxContainer/options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="HBoxContainer/clear" to="." method="_on_clear_pressed"]
+[connection signal="pressed" from="HBoxContainer/quit" to="." method="_on_quit_pressed"]
+[connection signal="meta_clicked" from="RichTextLabel" to="." method="_on_RichTextLabel_meta_clicked"]
