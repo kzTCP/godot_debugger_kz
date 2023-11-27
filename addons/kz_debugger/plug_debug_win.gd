@@ -394,7 +394,7 @@ func out(errors_obj: Dictionary):
 			#print(exp_obj.array_to_str(error))
 			_RichTextLabel.bbcode_text += add_on + str(exp_obj.array_to_str(error))
 		else:
-			_RichTextLabel.bbcode_text += add_on + error
+			_RichTextLabel.bbcode_text += add_on + str(error)
 
 
 func test():
