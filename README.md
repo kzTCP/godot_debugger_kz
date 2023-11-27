@@ -1,8 +1,8 @@
 # godot_debugger_kz
-a  debugger that allows you to track in which file and line a print function was used  console.out(["text"]);
+a  debugger that allows you to track in which file and line a print function was used  console.out(["text"]);\n
 
-HOW YO USE
-1- single arguments
+HOW YO USE\n
+1- single arguments\n
   console.out([ "text" ]); # output = text
 2- multi arguments
   console.out([ "text",5, 12.0, 'c' ]); # output = text, 5, 12.0, c 
