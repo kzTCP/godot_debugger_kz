@@ -199,181 +199,6 @@ func txt_size(txt: String) -> Vector2:
 	return RichTextLabel.new().get_font("normal_font").get_string_size(txt)
 	
 
-func word_to_lines(text:String, addOn:String, spliter:String="", gap:String="", reserved_space: float = 0) -> Array:
-	#gap = applied to all lines except first one 
-	
-	var script_info_width = txt_size(_expected_script_infos).x
-	
-	var fst_line = ""
-	var collector = ''
-	var old_collector2 = ''
-	var collector_2 = ''
-	# why lines = [" "] because you have to reserve space for first line 
-	# and lines = [" "] is better than lines = [0] which's confusing
-	var lines = [" "] # reserve first index for first line
-
-	var work_list
-	if spliter:
-		work_list = text.split(spliter)# text have target (list strings)
-	else:
-		work_list = text # text doensn't have target (list chars)
-		
-	#printt("work_list", work_list)
-	
-	for word in work_list:
-		#printt("word", word)
-		word =  str(word)
-		collector += word + addOn
-		if txt_size(collector).x + script_info_width + reserved_space < _txt_max_width:
-			if collector.ends_with(addOn):
-				fst_line = collector.left(collector.length() - addOn.length())# remove last \t
-			else:
-				fst_line = collector
-		else:
-			collector_2 += word + addOn # collect rest of text
-		
-			if txt_size(gap + collector_2).x + reserved_space  >= _txt_max_width:
-				#return []
-				if old_collector2:
-					lines.append(gap + old_collector2) # max was last line
-					collector_2 = word + addOn # collect current uncollected text
-					old_collector2 = word + addOn # this solved {issue_1}
-				else:
-					#printt("fine", collector_2, "old_collector2", old_collector2)
-					#case addon not in word
-					var sub_lines = word_to_lines(collector_2, "", "", gap, reserved_space)
-					#print(sub_lines)
-					for sub_line in sub_lines:
-						lines.append(str(sub_line).left(sub_line.length() - 1))
-					collector_2 = ""
-			else:
-				#collecting time
-				if collector_2.ends_with(addOn):
-					old_collector2 = collector_2.left(collector_2.length()- addOn.length())# remove last \t
-				else:
-					old_collector2 = collector_2
-	#collect rest
-	if old_collector2: 
-		#printt("old_collector", old_collector)
-		lines.append(gap + old_collector2) # max was last line
-	else:
-		# {issue_1} i don't think i need this code any more
-		# case: work_list = [.get_string_size(txt).get_string_size(txt).get_string_size(txt).get_string_size(txt), kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk, kkkkkkkkkkkkkkk, kkkkkk.get_string_size(txt).get_string_size(txt).get_string_size(txt).get_string_size(txt)]
-		# end of for loop, collector_2 has data and old_collector is empty
-		#collector_2	kkkkkk.get_string_size(txt).get_string_size(txt).get_string_size(txt).get_string_size(txt) 
-		if collector_2:
-			#printt("collector_2", collector_2)
-			var sub_lines = word_to_lines(collector_2, "", spliter, gap, reserved_space)
-			#printt("sub_lines_2", sub_lines)
-			for sub_line in sub_lines:
-				if fst_line:
-					lines.append(gap + sub_line) # append lines
-				else:
-					fst_line = gap + sub_line # define first line
-			collector_2 = ""
-			old_collector2 = ""
-			
-	if fst_line:
-		lines[0] = fst_line # overwrite first index
-	return lines
-
-
-func rearrange_errors_list(list_txt):
-	
-	var out_list = []
-	for txt in list_txt:
-	
-		var lines
-		var reseved_width = txt_size(_gap).x + txt_size("\t").x * 2 + _border.x  + _scroll_bar_width
-		
-		txt = str(txt) # convert thing to string
-		if txt.find("\n") >= 0:
-			lines = word_to_lines(txt, "\n", " ",_gap, reseved_width)
-			
-		elif txt.find(" ") >= 0:
-			printt("problem is here rearrange_errors_list()")
-			# case: dfgdfg dgh hdgh (sparated words)
-			lines = word_to_lines(txt, " ", " ", "", reseved_width)
-			
-		else:
-			# case: dfgdfgdghhdgh(link_words)
-			lines = word_to_lines(txt, "", "", "", reseved_width)
-		
-		printt("lines", lines)
-		#printt("-------")
-		for line in lines:
-			#printt("line", line)
-			# remove empty line
-			out_list.append(str(line))
-	
-	if not out_list.size(): print("not out_list.size()")
-	
-	#printt("out_list", out_list)
-	
-	return out_list
-
-
-func handle_slash_n(string: String)-> String:
-	var local_debug = false
-	# handle slash n in second,third ..... lines
-	var out_txt = ""
-	if string.find("\n") >= 0:
-		#print("was here")
-		var list_local_lines = string.split("\n")
-		if local_debug: print(list_local_lines)
-		for local_line in list_local_lines:
-			if local_line == list_local_lines[0]:
-				out_txt += local_line + "\n"
-			elif local_line != list_local_lines[list_local_lines.size()-1]:
-				out_txt += _gap + local_line + "\n"
-			else:
-				out_txt += _gap + local_line 
-	if local_debug: printt("out_txt", out_txt)
-	out_txt = out_txt if out_txt else string
-	
-	return out_txt
-
-
-func _out_process(collector2, lines, old_collection2, error):
-	
-	printt("_out_process")
-	
-	#printt("old_collection2", old_collection2)
-	#printt("collector2", collector2)
-	
-	if txt_size(_gap + collector2).x + _error_width_range >= _txt_max_width:
-		if old_collection2:
-			#print("if")
-			old_collection2 = handle_slash_n(old_collection2)
-			#if debug: printt("insert old collecting")
-			lines.append(_gap + old_collection2 + "\n") # save last text
-			#printt("error", error)
-			collector2 = str(error) + "\t" # collect uncollected text
-			old_collection2 = str(error) + "\t" # collect uncollected text
-			#print("else")
-	else:
-		#printt("else < _txt_max_width", error)
-		#collecting time
-		if collector2.ends_with("\t"):
-			old_collection2 = collector2.left(collector2.length()-1)# remove last \t
-		else:
-			old_collection2 = collector2 
-		#if debug: printt("collecting...")
-		
-	return {
-		"old_collection2": old_collection2, 
-		"collector2": collector2, 
-		"lines": lines
-	}
-
-
-func add_space(text: String, rest_width: float):
-	
-	while txt_size(text + " ").x + rest_width < _txt_max_width :
-		text += " "
-	return text
-
-
 func get_dashs(txt: String, dash:String = "-", error_val: float = 0.5)-> String:
 	
 	var restx = _RichTextLabel.rect_size.x - txt_size(txt).x
@@ -470,6 +295,7 @@ func out(errors_obj: Dictionary):
 		#printt("error", error, error is Dictionary)
 		if error is Dictionary:
 			#print(exp_obj.obj_to_str(error))
+			
 			_RichTextLabel.bbcode_text += add_on +  str(exp_obj.obj_to_str(error))
 		elif error is Array:
 			#print(exp_obj.array_to_str(error))
@@ -600,3 +426,7 @@ func _on_refresh_pressed():
 		json_default = Json.new("res://addons/kz_debugger/json/default.json")
 	
 	json_default.obj_append(obj)
+
+	
+func clear():
+	_RichTextLabel.bbcode_text = _copyright

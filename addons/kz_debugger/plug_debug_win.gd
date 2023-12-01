@@ -607,3 +607,7 @@ func _on_refresh_pressed():
 		json_default = Json.new("res://addons/kz_debugger/json/default.json")
 	
 	json_default.obj_append(obj)
+	
+	
+func clear():
+	_RichTextLabel.bbcode_text = _copyright

@@ -150,9 +150,14 @@ func _get_dock_type():
 	
 
 var scene_is_open: bool = false
+var text_was_cleared: bool = true
 func _check_for_new_log():
 	if scene_is_open:
 		scene_is_open = interface.is_playing_scene()
+		text_was_cleared = true
+	elif text_was_cleared:
+		dock.clear()
+		text_was_cleared = false
 
 
 func _signal_refrech_time_out():
