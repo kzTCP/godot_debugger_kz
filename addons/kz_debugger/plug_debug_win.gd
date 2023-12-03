@@ -22,7 +22,7 @@ var _text_bg_color: ColorRect
 var _src_hexa_color: String
 var _top_bar_col: ColorRect
 var _HBoxContainer: HBoxContainer
-var _clear_btn: Button
+var _clear_btn: TextureButton
 var _snap_percentage: int = 70
 var _snap_vec: Vector2 = Vector2(500, 200)
 
@@ -607,7 +607,7 @@ func _on_refresh_pressed():
 		json_default = Json.new("res://addons/kz_debugger/json/default.json")
 	
 	json_default.obj_append(obj)
-	
+	queue_free()
 	
 func clear():
 	_RichTextLabel.bbcode_text = _copyright

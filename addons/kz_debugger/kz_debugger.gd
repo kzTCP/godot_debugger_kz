@@ -150,14 +150,15 @@ func _get_dock_type():
 	
 
 var scene_is_open: bool = false
-var text_was_cleared: bool = true
+var clear_dock_text: bool = false
 func _check_for_new_log():
+	
 	if scene_is_open:
 		scene_is_open = interface.is_playing_scene()
-		text_was_cleared = true
-	elif text_was_cleared:
+		clear_dock_text = true
+	elif clear_dock_text:
 		dock.clear()
-		text_was_cleared = false
+		clear_dock_text = false
 
 
 func _signal_refrech_time_out():
@@ -201,7 +202,8 @@ func _exit_tree():
 		# Remove the dock.
 		remove_control_from_docks(dock)
 		# Erase the control from the memory.
-		dock.free()
+		if dock != null:
+			dock.free()
 	else:
 		pass
 		#print("_exit_tree no dock")

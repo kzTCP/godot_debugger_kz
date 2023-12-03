@@ -20,7 +20,7 @@ var _text_bg_color: ColorRect
 var _src_hexa_color: String
 var _top_bar_col: ColorRect
 var _HBoxContainer: HBoxContainer
-var _clear_btn: Button
+var _clear_btn: TextureButton
 var _snap_percentage: int = 70
 var _snap_vec: Vector2 = Vector2(500, 200)
 
@@ -199,9 +199,9 @@ func txt_size(txt: String) -> Vector2:
 	return RichTextLabel.new().get_font("normal_font").get_string_size(txt)
 	
 
-func get_dashs(txt: String, dash:String = "-", error_val: float = 0.5)-> String:
+func get_dashs(txt_between: String, dash:String = "-", error_val: float = 0.5)-> String:
 	
-	var restx = _RichTextLabel.rect_size.x - txt_size(txt).x
+	var restx = _RichTextLabel.rect_size.x - txt_size(txt_between).x
 	
 	var rest_center = restx/2 
 	var error_range = txt_size(dash).x * error_val
@@ -273,6 +273,7 @@ func out(errors_obj: Dictionary):
 	var script_example = "({0}:{1})".format([script_name, call_line])
 	
 	var dashs = get_dashs(script_example)
+	#var dashs = get_dashs("")
 	if not options_obj.use_separator:
 		dashs = ""
 		
@@ -286,7 +287,10 @@ func out(errors_obj: Dictionary):
 		_RichTextLabel.bbcode_text = ""
 		
 	#text with colors
+	#_RichTextLabel.bbcode_text +=  "[center]{0}{1}{2}\n[/center]".format([dashs, script_infos, dashs])
+	
 	_RichTextLabel.bbcode_text +=  "[center]{0}{1}{2}\n[/center]".format([dashs, script_infos, dashs])
+	
 	
 	for error in array_errors:
 		var add_on = _tab_spaces if str(error) != str(array_errors[0]) else ""
@@ -325,6 +329,7 @@ func _on_clear_pressed():
 
 func _on_RichTextLabel_meta_clicked(meta_url):
 	
+	#print(meta_url)
 	var list_data = str(meta_url).split(':')
 
 	var line = list_data[list_data.size() - 1]
@@ -426,6 +431,7 @@ func _on_refresh_pressed():
 		json_default = Json.new("res://addons/kz_debugger/json/default.json")
 	
 	json_default.obj_append(obj)
+	queue_free()
 
 	
 func clear():
