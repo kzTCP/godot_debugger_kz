@@ -14,3 +14,11 @@ godot `3.5` debugger that allows you to track in which file and line a `console.
 > output = text, ["list", 5] 
 ### console.out([ "text", {"list": 5, 5: "list"} ]); 
 > output = text, {"list": 5, 5: "list"}
+
+
+## Icons Meaning
+| icon | meaning |
+|-----:|-----------|
+|<picture> <img alt="resize image" src="./addons/kz_debugger/assets/resize.png" width="50" > </picture>|  popup window|
+
+
