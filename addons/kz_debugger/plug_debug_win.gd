@@ -610,4 +610,6 @@ func _on_refresh_pressed():
 	queue_free()
 	
 func clear():
+	
 	_RichTextLabel.bbcode_text = _copyright
+	_list_errors = []

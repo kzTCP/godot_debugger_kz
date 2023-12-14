@@ -81,8 +81,9 @@ func _enter_tree():
 	# Add the loaded scene to the docks.
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
 	# Note that LEFT_UL means the left of the editor, upper-left dock.
-	
-	
+
+
+var scene_is_playing = false
 var once: bool = true
 func _get_txt_to_print_from_scene():
 	if kz_signal:
@@ -92,11 +93,11 @@ func _get_txt_to_print_from_scene():
 			# no data to work with
 			return
 		
-		dock.is_new_log = not scene_is_open
+		dock.is_new_log = not scene_is_playing
 		for obj in array:
 			dock.out(obj)
-			scene_is_open = true
-			dock.is_new_log = not scene_is_open
+			scene_is_playing = true
+			dock.is_new_log = not scene_is_playing
 			kz_signal.array_remove(obj)
 			
 
@@ -149,26 +150,22 @@ func _get_dock_type():
 			json_dock.write({})# initialize to avoid entering here again
 	
 
-var scene_is_open: bool = false
-var clear_dock_text: bool = false
-func _check_for_new_log():
-	
-	if scene_is_open:
-		scene_is_open = interface.is_playing_scene()
-		clear_dock_text = true
-	elif clear_dock_text:
-		dock.clear()
-		clear_dock_text = false
-
-
+var scene_was_closed = true
 func _signal_refrech_time_out():
 	
 	timer.stop()
 	if dock:
 		_get_dock_type()
-		_get_txt_to_print_from_scene()
-		_get_script_infos_from_scene()
-		_check_for_new_log()
+		
+		if interface.is_playing_scene():
+			_get_txt_to_print_from_scene()
+			_get_script_infos_from_scene()
+			# clear old text after running a new scene
+			if scene_was_closed:
+				dock.clear()
+			scene_was_closed = false
+		else:
+			scene_was_closed = true
 	
 	timer.start()
 	
