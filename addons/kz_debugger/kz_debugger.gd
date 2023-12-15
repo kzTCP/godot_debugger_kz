@@ -155,11 +155,12 @@ func _signal_refrech_time_out():
 	
 	timer.stop()
 	if dock:
+		
 		_get_dock_type()
+		_get_script_infos_from_scene()
 		
 		if interface.is_playing_scene():
 			_get_txt_to_print_from_scene()
-			_get_script_infos_from_scene()
 			# clear old text after running a new scene
 			if scene_was_closed:
 				dock.clear()
