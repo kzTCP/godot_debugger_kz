@@ -6,13 +6,21 @@ godot `3.5` or `4.x` debugger that allows you to track in which file and line a 
 > `console.out([...args]);`
 
 ## Examples
-### console.out([ "text" ]); 
+```gdscript
+  console.out([ "text" ]);
+```
 > output = text
-### console.out([ "text", 5, 12.0, 'c' ]); 
+```gdscript
+console.out([ "text", 5, 12.0, 'c' ]);
+```
 > output = text, 5, 12.0, c 
-### console.out([ "text", ["list", 5] ]);  
+```gdscript
+ console.out([ "text", ["list", 5] ]);
+```
 > output = text, ["list", 5] 
-### console.out([ "text", {"list": 5, 5: "list"} ]); 
+```gdscript
+ console.out([ "text", {"list": 5, 5: "list"} ]);
+```
 > output = text, {"list": 5, 5: "list"}
 
 
@@ -27,4 +35,22 @@ godot `3.5` or `4.x` debugger that allows you to track in which file and line a 
 |<picture> <img alt="resize image" src="./addons/kz_debugger/assets/settings.png" width="50" > </picture>| settings|
 |<picture> <img alt="resize image" src="./addons/kz_debugger/assets/refresh.png" width="50" > </picture>|  refresh|
 |<picture> <img alt="resize image" src="./addons/kz_debugger/assets/heart_1_size-removebg-preview.png" width="50" > </picture>|  sponsor|
+
+# Showcase
+
+- General View
+  
+  ![img](https://iili.io/2e6HjhN.png)
+
+- Bottom View
+  
+  ![img](https://iili.io/2e6HeEX.png)
+  
+- Side View
+  
+  ![img](https://iili.io/2e6Hk4n.png)
+  
+- Dock Position
+  
+  ![img](https://iili.io/2e6HwQI.png)
 
