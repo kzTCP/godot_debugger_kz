@@ -2,6 +2,9 @@ tool
 class_name kz_options extends WindowDialog
 
 
+var msgBoxScene = preload("res://addons/kz_debugger/scenes/dialog/warningDialog.tscn")
+
+
 var use_separator : bool = false
 var _old_obj = {}
 var _check_box: CheckBox 
@@ -20,7 +23,6 @@ var _top_bar_color: ColorPickerButton
 var _source_color: ColorPickerButton
 var _use_snap_mode: CheckBox 
 
-var msgBoxScene = preload("res://addons/kz_debugger/dialog/warningDialog.tscn")
 var msgBox: kz_msgBox
 
 var win_size: Vector2

@@ -1,9 +1,13 @@
 tool
 extends Control
 
-# case of text problem:
-# update reseved_width variable
-#
+
+
+var kzStr = preload("res://addons/kz_debugger/scripts/KzStr.gd")
+var Json = preload("res://addons/kz_debugger/scripts/json.gd")
+var options_menu_scene = preload("res://addons/kz_debugger/scenes/options/options.tscn")
+
+
 
 var _top_bar_h: float  = 25
 var _tab_spaces: String = ''
@@ -35,9 +39,7 @@ var kz_signal: kzJson
 
 var options_menu: kz_options
 
-var kzStr = preload("res://addons/kz_debugger/core/KzStr.gd")
-var Json = preload("res://addons/kz_debugger/json.gd")
-var options_menu_scene = preload("res://addons/kz_debugger/options/options.tscn")
+
 
 var _error_width_range: float = 8
 # example
@@ -201,7 +203,7 @@ func txt_size(txt: String) -> Vector2:
 
 func get_dashs(txt_between: String, dash:String = "-", error_val: float = 0.5)-> String:
 	
-	var restx = _RichTextLabel.rect_size.x - txt_size(txt_between).x
+	var restx = int(_RichTextLabel.rect_size.x - txt_size(txt_between).x)
 	
 	var rest_center = restx/2 
 	var error_range = txt_size(dash).x * error_val
@@ -272,6 +274,8 @@ func out(errors_obj: Dictionary):
 	
 	var script_example = "({0}:{1})".format([script_name, call_line])
 	
+	#print_debug(script_example)
+	
 	var dashs = get_dashs(script_example)
 	#var dashs = get_dashs("")
 	if not options_obj.use_separator:
@@ -293,6 +297,7 @@ func out(errors_obj: Dictionary):
 	
 	
 	for error in array_errors:
+		
 		var add_on = _tab_spaces if str(error) != str(array_errors[0]) else ""
 
 		var exp_obj = KzStr.new(error)
@@ -307,7 +312,9 @@ func out(errors_obj: Dictionary):
 		else:
 			_RichTextLabel.bbcode_text += add_on + str(error)
 
-
+		_RichTextLabel.bbcode_text += '[color=white]'# support multi colors
+		
+		
 func test():
 	
 	var errors_obj = {

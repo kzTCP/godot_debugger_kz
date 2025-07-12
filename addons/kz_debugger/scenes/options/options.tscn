@@ -1,9 +1,8 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://addons/kz_debugger/options/options.gd" type="Script" id=1]
+[ext_resource path="res://addons/kz_debugger/scenes/options/options.gd" type="Script" id=1]
 
 [node name="WindowDialog" type="WindowDialog"]
-visible = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 697.5

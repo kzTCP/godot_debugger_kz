@@ -1,7 +1,7 @@
 tool
 extends EditorPlugin
 
-var Json = preload("res://addons/kz_debugger/json.gd")
+var Json = preload("res://addons/kz_debugger/scripts/json.gd")
 
 const plugin_name = "kz_debugger"
 var json_default: kzJson

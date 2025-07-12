@@ -1,5 +1,5 @@
 # godot_debugger_kz (plugin)
-godot `3.5` or `4.x` debugger that allows you to track in which file and line a `console.out([]);` function was called  
+godot `3.x`  debugger that allows you to track in which file and line a `console.out([]);` function was called  
 
 ## How To Use
 > [!TIP]

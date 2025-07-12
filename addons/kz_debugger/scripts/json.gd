@@ -9,37 +9,39 @@ func _init(path: String):
 	_path = path
 
 
-func write(var thing_to_save) -> void:
+func write(data) -> void:
 	
-	if debug: 
-		print("json.h")
-		print("write")
+	if debug:  print("write", _path)
 		
 	var file = File.new()
-	if file.file_exists(_path):
-		file.open(_path, File.WRITE)
-		file.store_var(thing_to_save)
-		file.close()
+	if not file.file_exists(_path): _create_file()
+	
+	file.open(_path, File.WRITE)
+	
+	file.store_var(data)
+	file.close()
+	
 		
 
 func read() -> Dictionary:
-	if debug: 
-		print("json.h")
-		print("read")
+	
+	if debug: print("read", _path)
 		
-	var theDict
+	var data
 	
 	var file = File.new()
 
 	if file.file_exists(_path):
 		file.open(_path, File.READ)
-		theDict = file.get_var()
+		data = file.get_var()
 		file.close()
 
-	return theDict
+		
+
+	return data
 	
 
-func obj_append (var dic: Dictionary) -> void:
+func obj_append (dic: Dictionary) -> void:
 	
 	if debug: 
 		print("json.h")
@@ -64,24 +66,27 @@ func array_read() -> Array:
 		
 	var file = File.new()
 	file.open(_path, File.READ)
-	var array = file.get_var()
+	var x = file.get_var()
+	var array = x if x is Array else []
 	file.close()
 	return array
 
 
-func array_append(var obj: Dictionary) -> void:
+func array_append(obj: Dictionary) -> void:
 	
 	if debug: 
 		print("json.h")
 		print("array_append")	
 		
-	var array = array_read()
-	if not array: array = []
-	array.append(obj)
+	var my_array: Array
+	
+	my_array = array_read() if array_read() else  []
+	
+	my_array.append(obj)
 
 	var file = File.new()
 	file.open(_path, File.WRITE)
-	file.store_var(array)
+	file.store_var(my_array)
 	file.close()
 	
 	
@@ -89,13 +94,14 @@ func _obj_compaire(obj1: Dictionary, obj2: Dictionary) -> bool:
 	return str(obj1) == str(obj2)
 	
 	
-func array_remove(var obj: Dictionary) -> void:
+func array_remove(obj: Dictionary) -> void:
 	
 	if debug: 
 		print("json.h")
 		print("array_remove")
 		
-	var array: Array = array_read()
+	
+	var array: Array = array_read() if array_read() else []
 	
 	if not array and debug:
 		print("json array_remove array is empty")
@@ -131,3 +137,32 @@ func clear() -> void:
 	file.open(_path, File.WRITE)
 	file.store_var({})
 	file.close()
+	
+	
+func _create_file():
+	
+	var dir = Directory.new()
+
+	# Extract directory and file
+	var directory_path = _path.get_base_dir()
+	var file_name = _path.get_file()
+
+	# Create the directory if it doesn't exist
+	if not dir.dir_exists(directory_path):
+		var err = dir.make_dir_recursive(directory_path)
+		if err != OK:
+			push_error("❌ Failed to create directory: " + directory_path)
+			return
+
+
+	# Create the file if it doesn't exist
+	if not dir.file_exists(_path):
+		var file = File.new()
+		var err = file.open(_path, File.WRITE)
+		if err != OK:
+			push_error("❌ Failed to create file: " + _path)
+			return
+		file.store_string("")  # Write empty content
+		file.close()
+	else:
+		print("⚠️ File already exists:", _path)

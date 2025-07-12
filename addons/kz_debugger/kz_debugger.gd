@@ -3,9 +3,20 @@ extends EditorPlugin
 
 
 
-var current_script: Script 
+var Json = preload("res://addons/kz_debugger/scripts/json.gd")
 
-var Json = preload("res://addons/kz_debugger/json.gd")
+var _debug_dock_scene = preload(
+	"res://addons/kz_debugger/scenes/dock/debug_dock.tscn"
+)
+var _plug_debug_win_scene = preload(
+	"res://addons/kz_debugger/scenes/plug_debug_win/plug_debug_win.tscn"
+)
+
+var _debugger_script_path = "res://addons/kz_debugger/scripts/Debugger.gd"
+var _json_path = "res://addons/kz_debugger/json/"
+
+
+var current_script: Script 
 
 # A class member to hold the dock during the plugin life cycle.
 var dock
@@ -36,12 +47,12 @@ func load_dock():
 			if "type" in dock_obj:
 				var dock_type = dock_obj["type"]
 				if dock_type == "control":
-					scene_isntance = preload("res://addons/kz_debugger/dock/debug_dock.tscn").instance()
+					scene_isntance = _debug_dock_scene.instance()
 				elif  dock_type == "win":
-					scene_isntance = preload("res://addons/kz_debugger/plug_debug_win.tscn").instance()
+					scene_isntance = _plug_debug_win_scene.instance()
 					
 	if not scene_isntance: 
-		scene_isntance = preload("res://addons/kz_debugger/plug_debug_win.tscn").instance()
+		scene_isntance = _plug_debug_win_scene.instance()
 		
 	return scene_isntance
 
@@ -55,10 +66,10 @@ func _enter_tree():
 	
 	interface = get_editor_interface()
 	
-	kz_signal = Json.new("res://addons/kz_debugger/json/signal.json")
-	json_goto = Json.new("res://addons/kz_debugger/json/goto.json")
-	json_dock = Json.new("res://addons/kz_debugger/json/dock.json")
-	json_default = Json.new("res://addons/kz_debugger/json/default.json")
+	kz_signal = Json.new(_json_path + "signal.json")
+	json_goto = Json.new(_json_path + "goto.json")
+	json_dock = Json.new(_json_path + "dock.json")
+	json_default = Json.new(_json_path + "default.json")
 	
 	json_dock.write({})
 	kz_signal.write({})
@@ -70,7 +81,7 @@ func _enter_tree():
 	if not stop_signal: add_child(timer)
 
 	# The autoload can be a scene or script file.
-	add_autoload_singleton(AUTOLOAD_NAME, "res://addons/kz_debugger/core/Debugger.gd")
+	add_autoload_singleton(AUTOLOAD_NAME, _debugger_script_path)
 	
 	dock = load_dock()
 	
@@ -123,6 +134,7 @@ func _get_dock_type():
 	if json_dock:
 		var dock_obj = json_dock.read()
 		if dock_obj:
+			
 			if debug: 
 				print("res://addons/h/h.gd")
 				printt("dock_obj", dock_obj)
@@ -137,11 +149,11 @@ func _get_dock_type():
 			#printt(type, dock)
 			
 			if type == "win":
-				dock = preload("res://addons/kz_debugger/plug_debug_win.tscn").instance()
+				dock = _plug_debug_win_scene.instance()
 				# Add the loaded scene to the docks.
 				
 			elif type == "control":
-				dock = preload("res://addons/kz_debugger/dock/debug_dock.tscn").instance()
+				dock = _debug_dock_scene.instance()
 				# Add the loaded scene to the docks.
 				
 			# Add the loaded scene to the docks.

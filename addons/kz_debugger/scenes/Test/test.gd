@@ -5,8 +5,8 @@ extends Control
 # var a = 2
 # var b = "text"
 
-var kzStr = preload("res://addons/kz_debugger/core/KzStr.gd")
-var j = preload("res://addons/kz_debugger/json.gd")
+var kzStr = preload("res://addons/kz_debugger/scripts/KzStr.gd")
+var j = preload("res://addons/kz_debugger/scripts/json.gd")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

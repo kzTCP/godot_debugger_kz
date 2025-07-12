@@ -1,12 +1,14 @@
 tool
 extends WindowDialog
 
-# case of text problem:
-# update reseved_width variable
-#
 
-var kzStr = preload("res://addons/kz_debugger/core/KzStr.gd")
- 
+
+var kzStr = preload("res://addons/kz_debugger/scripts/KzStr.gd")
+var Json = preload("res://addons/kz_debugger/scripts/json.gd")
+var options_menu_scene = preload("res://addons/kz_debugger/scenes/options/options.tscn")
+var _json_path = "res://addons/kz_debugger/json/"
+
+
 var _top_bar_h: float  = 25
 var _tab_spaces: String = ''
 var _expected_script_infos: String = ''
@@ -30,14 +32,13 @@ var test_mode: bool = false
 var os_size = OS.window_size
 
 
-var Json = preload("res://addons/kz_debugger/json.gd")
+
 var json_goto: kzJson
 var json_default: kzJson
 var json_dock: kzJson
 var kz_signal: kzJson
 	
-
-var options_menu_scene = preload("res://addons/kz_debugger/options/options.tscn")
+	
 var options_menu: kz_options
 
 # example
@@ -118,10 +119,10 @@ func _enter_tree():
 		printt("->\tplug_debug_win.dg")
 		print("_enter_tree")
 	
-	json_goto = Json.new("res://addons/kz_debugger/json/goto.json")
-	json_default = Json.new("res://addons/kz_debugger/json/default.json")
-	json_dock = Json.new("res://addons/kz_debugger/json/dock.json")
-	kz_signal = Json.new("res://addons/kz_debugger/json/signal.json")
+	json_goto = Json.new(_json_path + "goto.json")
+	json_default = Json.new(_json_path + "default.json")
+	json_dock = Json.new(_json_path + "dock.json")
+	kz_signal = Json.new(_json_path + "signal.json")
 	
 	show()
 	resizable = true
@@ -604,7 +605,7 @@ func _on_refresh_pressed():
 	
 	var obj = {"plugin": {"refresh": true}}
 	if not json_default:
-		json_default = Json.new("res://addons/kz_debugger/json/default.json")
+		json_default = Json.new(_json_path + "default.json")
 	
 	json_default.obj_append(obj)
 	queue_free()

@@ -1,10 +1,6 @@
 class_name KzStr extends Object
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
 var text
 
 func _init(txt):

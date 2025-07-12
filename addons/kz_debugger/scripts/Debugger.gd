@@ -1,7 +1,8 @@
 extends WindowDialog
 
 
-var Json = preload("res://addons/kz_debugger/json.gd")
+var Json = preload("res://addons/kz_debugger/scripts/json.gd")
+var _json_path = "res://addons/kz_debugger/json/"
 var kz_signal: kzJson
 
 
@@ -9,7 +10,7 @@ func _init():
 	
 	#print("Debugger init")
 	#updates will be written here
-	kz_signal = Json.new("res://addons/kz_debugger/json/signal.json")
+	kz_signal = Json.new( _json_path + "signal.json")
 	
 
 func out(array_errors: Array):
