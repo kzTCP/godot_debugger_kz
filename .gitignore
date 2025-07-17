@@ -1,2 +1,5 @@
+
+addons/kz_debugger/json/*
+addons/kz_debugger/json/signal.json
 *.json 
 *.TMP

@@ -189,21 +189,17 @@ func _goto_script_line(error_path: String, line_error: int):
 	#printt(error_path, line_error)
 	
 	var script_editor = interface.get_script_editor()
-	var scripts = script_editor.get_open_scripts()# Array[Script]
 
 	#script_editor.goto_line(26)
 	#printt("scripts", scripts)
 	
 	if str(error_path).find("res://") >= 0:
 		
-		for open_script in scripts:
-			var current_path = open_script.get_path()
-			if error_path == current_path:
-				# switch to a script in godot at line 392 without select
-				interface.edit_script(open_script)
-				# goto line 392 and auto select it
-				script_editor.goto_line(line_error-1)
-				break
+		# switch to a script in godot at line 392 without select
+		interface.edit_script(load(error_path) as Script) 
+		# goto line 392 and auto select it
+		script_editor.goto_line(line_error-1)
+		
 
 
 func _exit_tree():
