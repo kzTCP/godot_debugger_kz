@@ -43,9 +43,7 @@ func read() -> Dictionary:
 
 func obj_append (dic: Dictionary) -> void:
 	
-	if debug: 
-		print("json.h")
-		print("obj_append")
+	if debug: print("json.h obj_append")
 		
 	var saved_obj = read()
 	if not saved_obj: 
@@ -60,9 +58,7 @@ func obj_append (dic: Dictionary) -> void:
 	
 func array_read() -> Array:
 	
-	if debug: 
-		print("json.h")
-		print("array_read")
+	if debug: print("json.h array_read")
 		
 	var file = File.new()
 	file.open(_path, File.READ)
@@ -74,9 +70,7 @@ func array_read() -> Array:
 
 func array_append(obj: Dictionary) -> void:
 	
-	if debug: 
-		print("json.h")
-		print("array_append")	
+	if debug: print("json.h array_append")	
 		
 	var my_array: Array
 	
@@ -96,9 +90,7 @@ func _obj_compaire(obj1: Dictionary, obj2: Dictionary) -> bool:
 	
 func array_remove(obj: Dictionary) -> void:
 	
-	if debug: 
-		print("json.h")
-		print("array_remove")
+	if debug: print("json.h array_remove")
 		
 	
 	var array: Array = array_read() if array_read() else []
@@ -129,9 +121,7 @@ func array_remove(obj: Dictionary) -> void:
 
 func clear() -> void:
 	
-	if debug: 
-		print("json.h")
-		print("clear")
+	if debug: print("json.h clear")
 		
 	var file = File.new()
 	file.open(_path, File.WRITE)

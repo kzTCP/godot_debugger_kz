@@ -1,0 +1,278 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/kz_debugger/scenes/settings/WindowSettings/WindowSettings.gd" type="Script" id=1]
+
+[node name="WindowSettings" type="WindowDialog"]
+visible = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 697.5
+margin_top = 350.5
+margin_right = 198.5
+margin_bottom = 50.5
+rect_min_size = Vector2( 525, 300 )
+window_title = "Window Settings"
+resizable = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+margin_bottom = 32.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 525.0
+margin_bottom = 248.0
+
+[node name="labels" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
+margin_right = 105.0
+margin_bottom = 248.0
+
+[node name="separator" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_right = 105.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 0, 24 )
+text = "Seperator"
+valign = 1
+
+[node name="topbarColor" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_top = 28.0
+margin_right = 105.0
+margin_bottom = 52.0
+rect_min_size = Vector2( 0, 24 )
+text = "Top Bar Color"
+valign = 1
+
+[node name="source_color" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_top = 56.0
+margin_right = 105.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 0, 24 )
+text = "Source Color"
+valign = 1
+
+[node name="resolution" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_top = 84.0
+margin_right = 105.0
+margin_bottom = 108.0
+rect_min_size = Vector2( 0, 24 )
+text = "size"
+valign = 1
+
+[node name="min size" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_top = 112.0
+margin_right = 105.0
+margin_bottom = 136.0
+rect_min_size = Vector2( 0, 24 )
+text = "Min Size"
+valign = 1
+
+[node name="use_snap_mode" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_top = 140.0
+margin_right = 105.0
+margin_bottom = 164.0
+rect_min_size = Vector2( 0, 24 )
+text = "Use Snap Mode"
+valign = 1
+
+[node name="snap" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_top = 168.0
+margin_right = 105.0
+margin_bottom = 192.0
+rect_min_size = Vector2( 0, 24 )
+text = "Snap To"
+valign = 1
+
+[node name="snap_percentage" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_top = 196.0
+margin_right = 105.0
+margin_bottom = 220.0
+rect_min_size = Vector2( 0, 24 )
+text = "Snap Percentage"
+valign = 1
+
+[node name="snap_val" type="Label" parent="VBoxContainer/HBoxContainer/labels"]
+margin_top = 224.0
+margin_right = 105.0
+margin_bottom = 248.0
+rect_min_size = Vector2( 0, 24 )
+text = "Snap  Value"
+valign = 1
+
+[node name="inputs" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
+margin_left = 109.0
+margin_right = 251.0
+margin_bottom = 248.0
+
+[node name="Separator" type="CheckBox" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_right = 142.0
+margin_bottom = 24.0
+
+[node name="HeaderColor" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_top = 28.0
+margin_right = 142.0
+margin_bottom = 52.0
+rect_min_size = Vector2( 0, 24 )
+text = "te"
+color = Color( 0.0235294, 0.00392157, 0.00392157, 1 )
+
+[node name="LinkColor" type="ColorPickerButton" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_top = 56.0
+margin_right = 142.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 0, 24 )
+text = "te"
+color = Color( 0.0235294, 0.00392157, 0.00392157, 1 )
+
+[node name="size" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_top = 84.0
+margin_right = 142.0
+margin_bottom = 108.0
+
+[node name="x_size" type="LineEdit" parent="VBoxContainer/HBoxContainer/inputs/size"]
+margin_right = 58.0
+margin_bottom = 24.0
+
+[node name="x" type="Label" parent="VBoxContainer/HBoxContainer/inputs/size"]
+margin_left = 62.0
+margin_top = 5.0
+margin_right = 69.0
+margin_bottom = 19.0
+text = "x"
+
+[node name="y_size" type="LineEdit" parent="VBoxContainer/HBoxContainer/inputs/size"]
+margin_left = 73.0
+margin_right = 131.0
+margin_bottom = 24.0
+
+[node name="y" type="Label" parent="VBoxContainer/HBoxContainer/inputs/size"]
+margin_left = 135.0
+margin_top = 5.0
+margin_right = 142.0
+margin_bottom = 19.0
+text = "y"
+
+[node name="min_size" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_top = 112.0
+margin_right = 142.0
+margin_bottom = 136.0
+
+[node name="x_min_size" type="LineEdit" parent="VBoxContainer/HBoxContainer/inputs/min_size"]
+margin_right = 58.0
+margin_bottom = 24.0
+
+[node name="x" type="Label" parent="VBoxContainer/HBoxContainer/inputs/min_size"]
+margin_left = 62.0
+margin_top = 5.0
+margin_right = 69.0
+margin_bottom = 19.0
+text = "x"
+
+[node name="y_min_size" type="LineEdit" parent="VBoxContainer/HBoxContainer/inputs/min_size"]
+margin_left = 73.0
+margin_right = 131.0
+margin_bottom = 24.0
+
+[node name="y" type="Label" parent="VBoxContainer/HBoxContainer/inputs/min_size"]
+margin_left = 135.0
+margin_top = 5.0
+margin_right = 142.0
+margin_bottom = 19.0
+text = "y"
+
+[node name="snap_mode" type="CheckBox" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_top = 140.0
+margin_right = 142.0
+margin_bottom = 164.0
+rect_min_size = Vector2( 0, 24 )
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_top = 168.0
+margin_right = 142.0
+margin_bottom = 192.0
+rect_min_size = Vector2( 0, 24 )
+text = "left"
+items = [ "left", null, false, 0, null, "bottom", null, false, 1, null, "right", null, false, 2, null, "center", null, false, 3, null ]
+selected = 0
+
+[node name="snap_percentage" type="LineEdit" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_top = 196.0
+margin_right = 142.0
+margin_bottom = 220.0
+align = 3
+
+[node name="snap_val" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/inputs"]
+margin_top = 224.0
+margin_right = 142.0
+margin_bottom = 248.0
+
+[node name="snap_x" type="LineEdit" parent="VBoxContainer/HBoxContainer/inputs/snap_val"]
+margin_right = 58.0
+margin_bottom = 24.0
+
+[node name="x" type="Label" parent="VBoxContainer/HBoxContainer/inputs/snap_val"]
+margin_left = 62.0
+margin_top = 5.0
+margin_right = 69.0
+margin_bottom = 19.0
+text = "x"
+
+[node name="snap_y" type="LineEdit" parent="VBoxContainer/HBoxContainer/inputs/snap_val"]
+margin_left = 73.0
+margin_right = 131.0
+margin_bottom = 24.0
+
+[node name="y" type="Label" parent="VBoxContainer/HBoxContainer/inputs/snap_val"]
+margin_left = 135.0
+margin_top = 5.0
+margin_right = 142.0
+margin_bottom = 19.0
+text = "y"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+size_flags_vertical = 3
+alignment = 2
+
+[node name="bottom_bar" type="HBoxContainer" parent="VBoxContainer2"]
+margin_top = 280.0
+margin_right = 525.0
+margin_bottom = 300.0
+alignment = 2
+
+[node name="default" type="Button" parent="VBoxContainer2/bottom_bar"]
+margin_left = 292.0
+margin_right = 361.0
+margin_bottom = 20.0
+text = "DEFAULT"
+
+[node name="reset" type="Button" parent="VBoxContainer2/bottom_bar"]
+margin_left = 365.0
+margin_right = 413.0
+margin_bottom = 20.0
+text = "RESET"
+
+[node name="cancel" type="Button" parent="VBoxContainer2/bottom_bar"]
+margin_left = 417.0
+margin_right = 478.0
+margin_bottom = 20.0
+text = "CANCEL"
+
+[node name="save" type="Button" parent="VBoxContainer2/bottom_bar"]
+margin_left = 482.0
+margin_right = 525.0
+margin_bottom = 20.0
+text = "SAVE"
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/inputs/snap_mode" to="." method="_on_snap_mode_pressed"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/inputs/snap_percentage" to="." method="_on_snap_percentage_text_changed"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/inputs/snap_val/snap_x" to="." method="_on_snap_x_text_changed"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/inputs/snap_val/snap_y" to="." method="_on_snap_y_text_changed"]
+[connection signal="pressed" from="VBoxContainer2/bottom_bar/default" to="." method="_on_default_pressed"]
+[connection signal="pressed" from="VBoxContainer2/bottom_bar/reset" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="VBoxContainer2/bottom_bar/cancel" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="VBoxContainer2/bottom_bar/save" to="." method="_on_save_pressed"]

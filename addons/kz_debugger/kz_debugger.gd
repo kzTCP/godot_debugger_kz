@@ -2,18 +2,17 @@ tool
 extends EditorPlugin
 
 
+const Json = preload("res://addons/kz_debugger/scripts/json.gd")
 
-var Json = preload("res://addons/kz_debugger/scripts/json.gd")
-
-var _debug_dock_scene = preload(
-	"res://addons/kz_debugger/scenes/dock/debug_dock.tscn"
+const _dock_scene = preload(
+	"res://addons/kz_debugger/scenes/UI/dock/dock.tscn"
 )
-var _plug_debug_win_scene = preload(
-	"res://addons/kz_debugger/scenes/plug_debug_win/plug_debug_win.tscn"
+const _window_scene = preload(
+	"res://addons/kz_debugger/scenes/UI/window/window.tscn"
 )
 
-var _debugger_script_path = "res://addons/kz_debugger/scripts/Debugger.gd"
-var _json_path = "res://addons/kz_debugger/json/"
+const _console_script_path = "res://addons/kz_debugger/scripts/Console.gd"
+const _json_path = "res://addons/kz_debugger/json/"
 
 
 var current_script: Script 
@@ -38,23 +37,28 @@ var debug: bool = false
 
 
 func load_dock():
-	var scene_isntance
+	
+	var dock_scene
+	
 	if json_default:
-		var obj_default = json_default.read()
-		#print(obj_default)
-		if obj_default and "dock" in obj_default:
-			var dock_obj = obj_default["dock"]
-			if "type" in dock_obj:
-				var dock_type = dock_obj["type"]
-				if dock_type == "control":
-					scene_isntance = _debug_dock_scene.instance()
-				elif  dock_type == "win":
-					scene_isntance = _plug_debug_win_scene.instance()
-					
-	if not scene_isntance: 
-		scene_isntance = _plug_debug_win_scene.instance()
 		
-	return scene_isntance
+		var obj_default = json_default.read()
+		
+		if obj_default and "dock_type" in obj_default:
+			var dock_type = obj_default["dock_type"]
+			if dock_type == DockTypeKZD.CONTROL:
+				dock_scene = _dock_scene.instance()
+			elif  dock_type == DockTypeKZD.WINDOW:
+				dock_scene = _window_scene.instance()
+				
+	if not dock_scene:
+		# initialize
+		dock_scene = _window_scene.instance()
+		json_default.obj_append(
+			{"dock_type": DockTypeKZD.CONTROL}
+		)
+
+	return dock_scene
 
 
 func _out_of_dock():
@@ -81,7 +85,7 @@ func _enter_tree():
 	if not stop_signal: add_child(timer)
 
 	# The autoload can be a scene or script file.
-	add_autoload_singleton(AUTOLOAD_NAME, _debugger_script_path)
+	add_autoload_singleton(AUTOLOAD_NAME, _console_script_path)
 	
 	dock = load_dock()
 	
@@ -95,94 +99,23 @@ func _enter_tree():
 
 
 var scene_is_playing = false
-var once: bool = true
 func _get_txt_to_print_from_scene():
-	if kz_signal:
-		var data = kz_signal.read()
-		var array = data if data is Array else [data]
-		if not data:
-			# no data to work with
-			return
-		
-		dock.is_new_log = not scene_is_playing
-		for obj in array:
-			dock.out(obj)
-			scene_is_playing = true
-			dock.is_new_log = not scene_is_playing
-			kz_signal.array_remove(obj)
-			
-
-func _get_script_infos_from_scene():
 	
-	if json_goto:
-		var data = json_goto.read()
-		if not data:
-			# no data to work with
-			return
-			
-		var array_goto =  data if data is Array else [data]
-
-		for obj_goto in array_goto:
-			var url = obj_goto["url"]
-			var line = obj_goto["line"]
-			_goto_script_line(url, int(line))
-			json_goto.array_remove(obj_goto)
+	if not kz_signal: return 
+	
+	var data = kz_signal.read()
+	var array = data if data is Array else [data]
+	
+	if not data: return # no data to work with
+	
+	dock.ui.is_new_log = not scene_is_playing
+	for obj in array:
+		dock.ui.out(obj)
+		scene_is_playing = true
+		dock.ui.is_new_log = not scene_is_playing
+		kz_signal.array_remove(obj)
 
 
-func _get_dock_type():
-	
-	if json_dock:
-		var dock_obj = json_dock.read()
-		if dock_obj:
-			
-			if debug: 
-				print("res://addons/h/h.gd")
-				printt("dock_obj", dock_obj)
-			
-			if is_instance_valid(dock):
-				# Remove the dock.
-				remove_control_from_docks(dock)
-				#dock.free()
-				
-			var type = str(dock_obj["type"]).to_lower()
-
-			#printt(type, dock)
-			
-			if type == "win":
-				dock = _plug_debug_win_scene.instance()
-				# Add the loaded scene to the docks.
-				
-			elif type == "control":
-				dock = _debug_dock_scene.instance()
-				# Add the loaded scene to the docks.
-				
-			# Add the loaded scene to the docks.
-			add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
-			
-			json_dock.write({})# initialize to avoid entering here again
-	
-
-var scene_was_closed = true
-func _signal_refrech_time_out():
-	
-	timer.stop()
-	if dock:
-		
-		_get_dock_type()
-		_get_script_infos_from_scene()
-		
-		if interface.is_playing_scene():
-			_get_txt_to_print_from_scene()
-			# clear old text after running a new scene
-			if scene_was_closed:
-				dock.clear()
-			scene_was_closed = false
-		else:
-			scene_was_closed = true
-	
-	timer.start()
-	
-	
 func _goto_script_line(error_path: String, line_error: int):
 	
 	#printt("_on_link_pressed")
@@ -199,20 +132,89 @@ func _goto_script_line(error_path: String, line_error: int):
 		interface.edit_script(load(error_path) as Script) 
 		# goto line 392 and auto select it
 		script_editor.goto_line(line_error-1)
-		
+	
 
+func _script_navigation_process():
+	
+	if not json_goto: return
+		
+	var data = json_goto.read()
+	
+	if not data: return # no data to work with
+		
+	var array_goto =  data if data is Array else [data]
+
+	for obj_goto in array_goto:
+		var url = obj_goto["url"]
+		var line = obj_goto["line"]
+		_goto_script_line(url, int(line))
+		json_goto.array_remove(obj_goto)
+
+
+func _get_dock_type():
+	
+	if not json_dock: return 
+	
+	var dock_obj = json_dock.read()
+	
+	if not dock_obj: return
+		
+	if debug: print("kz_debugger.gd dock_obj", dock_obj)
+	
+	if is_instance_valid(dock):
+		# Remove the dock.
+		remove_control_from_docks(dock)
+		#dock.free()
+		
+	var type = str(dock_obj["type"]).to_lower()
+
+	#printt(type, dock)
+	
+	if type == DockTypeKZD.WINDOW:
+		dock = _window_scene.instance()
+		
+	elif type == DockTypeKZD.CONTROL:
+		dock = _dock_scene.instance()
+		
+	# Add the loaded scene to the docks.
+	add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
+	
+	json_dock.write({}) # initialize to avoid entering here again
+	
+
+var scene_was_closed = true
+func _signal_refrech_time_out():
+	
+	if not dock: return 
+	
+	timer.stop()
+	
+	_get_dock_type()
+	
+	_script_navigation_process()
+	
+	if interface.is_playing_scene():
+		
+		_get_txt_to_print_from_scene()
+		# clear old text after running a new scene
+		if scene_was_closed: dock.ui.clear()
+		scene_was_closed = false
+		
+	else:
+		
+		scene_was_closed = true
+		
+	timer.start()
+	
 
 func _exit_tree():
+	
 	# Clean-up of the plugin goes here.
 	if is_instance_valid(dock):
 		# Remove the dock.
 		remove_control_from_docks(dock)
 		# Erase the control from the memory.
-		if dock != null:
-			dock.free()
-	else:
-		pass
-		#print("_exit_tree no dock")
+		if dock != null: dock.free()
 		
 	remove_autoload_singleton(AUTOLOAD_NAME)
 	

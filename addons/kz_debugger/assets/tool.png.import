@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/window.png-8eb6f2d02df8702fb8ae7b43ba407c11.stex"
+path="res://.import/tool.png-a9e2f30ab027cfb00a08089dbded3956.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/kz_debugger/assets/window.png"
-dest_files=[ "res://.import/window.png-8eb6f2d02df8702fb8ae7b43ba407c11.stex" ]
+source_file="res://addons/kz_debugger/assets/tool.png"
+dest_files=[ "res://.import/tool.png-a9e2f30ab027cfb00a08089dbded3956.stex" ]
 
 [params]
 
