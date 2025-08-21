@@ -1,6 +1,10 @@
 # godot_debugger_kz (plugin)
 godot `3.x`  debugger that allows you to track in which file and line a `console.out([]);` function was called  
 
+## Demo Video
+
+[![Watch the video](https://img.youtube.com/vi/yiwMbG5GEJQ/0.jpg)](https://youtu.be/yiwMbG5GEJQ)
+
 ## How To Use
 > [!TIP]
 > `console.out([...args]);`
