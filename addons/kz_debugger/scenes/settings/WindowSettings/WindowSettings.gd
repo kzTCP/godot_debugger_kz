@@ -8,25 +8,6 @@ var _snap_val_x: LineEdit
 var _snap_val_y: LineEdit
 var _use_snap_mode: CheckBox 
 
-
-
-static func get_default_settings() -> Dictionary:
-	var obj = .get_default_settings()
-	
-	#overwrite this
-	obj["size"] = VecTwo.to_obj(ConfigKZD.WINDOW_SIZE)
-	obj["min_size"] = VecTwo.to_obj(ConfigKZD.WINDOW_SIZE)
-	
-	#additional settings
-	obj["use_snap"] = true
-	obj["snap"] = SnapKZD.CENTER
-	obj["snap_percentage"] = 70
-	obj["snap_vector"] = VecTwo.to_obj(ConfigKZD.WINDOW_SIZE)
-	# idk why i added this ^_^
-	obj['position'] = VecTwo.to_obj(
-		(OS.window_size - ConfigKZD.WINDOW_SIZE)/2
-	)
-	return obj
 	
 
 func _enter_tree():
@@ -38,8 +19,40 @@ func _enter_tree():
 	_snap_percentage = $VBoxContainer/HBoxContainer/inputs/snap_percentage
 	_snap_val_x = $VBoxContainer/HBoxContainer/inputs/snap_val/snap_x
 	_snap_val_y = $VBoxContainer/HBoxContainer/inputs/snap_val/snap_y
+	
+	_settings_data = WindowSettingsDataKZD.new()
+	
+# override
+func _on_default_pressed():
+	
+	init(WindowSettingsDataKZD.new())
 
 
+
+func apply_settings(data: DockSettignsDataKZD):
+	
+	.apply_settings(data)
+	
+	_use_snap_mode.pressed  = bool(data.use_snap)
+	_snap_option.text 		= data.snap
+	_snap_percentage.text 	= str(data.snap_percentage)
+	_snap_val_x.text		= str(data.snap_vector.x)
+	_snap_val_y.text 		= str(data.snap_vector.y)
+	
+	
+func save_settings() -> DockSettignsDataKZD:
+	
+	_settings_data = .save_settings()
+	
+	_settings_data.use_snap        = _use_snap_mode.pressed
+	_settings_data.snap            = _snap_option.text
+	_settings_data.snap_percentage = _snap_percentage.text
+	_settings_data.snap_vector  	  = {
+		"x": _snap_val_x.text, "y": _snap_val_y.text
+	}
+	
+	return _settings_data
+	
 	
 func _get_settings_error_msg() -> String:
 	
@@ -107,15 +120,15 @@ func get_index_options_btn(
 	return -1
 
 
-func load_data(obj: Directory):
+func load_data(data: WindowSettingsKZD):
 	
-	var snap_index = get_index_options_btn(_snap_option, obj["snap"])
+	var snap_index = get_index_options_btn(_snap_option, data.snap)
 	_snap_option.select(snap_index)
 	
-	_snap_percentage.text = str(obj["snap_percentage"])
-	_snap_val_x.text = str(obj["snap_vector"].x)
-	_snap_val_y.text = str(obj["snap_vector"].y)
-	_use_snap_mode.pressed = obj["use_snap"]
+	_snap_percentage.text 	= str( data.snap_percentage )
+	_snap_val_x.text 		= str( data.snap_vector.x )
+	_snap_val_y.text 		= str( data.snap_vector.y )
+	_use_snap_mode.pressed 	= data.use_snap
 
 
 func _on_snap_percentage_text_changed(new_text):
@@ -138,26 +151,7 @@ func _on_snap_y_text_changed(new_text):
 	handle_input(_snap_val_y, new_text)
 
 
-func set_settings(obj: Dictionary):
-	
-	.set_settings(obj)
-	
-	_use_snap_mode.pressed = bool(obj["use_snap"])
-	_snap_option.text = obj["snap"]
-	_snap_percentage.text = str(obj["snap_percentage"])
-	_snap_val_x.text = str(obj["snap_vector"].x)
-	_snap_val_y.text = str(obj["snap_vector"].y)
 
+	
 
-func object():
-	
-	var obj = .object()
-	
-	obj["use_snap"] = _use_snap_mode.pressed
-	obj["snap"] = _snap_option.text
-	obj["snap_percentage"] = _snap_percentage.text
-	obj["snap_vector"] = {"x": _snap_val_x.text, "y": _snap_val_y.text}
-
-	return obj
-	
 	

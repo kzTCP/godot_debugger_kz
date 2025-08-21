@@ -2,7 +2,6 @@ extends Control
 
 
 var kzStr = preload("res://addons/kz_debugger/scripts/KzStr.gd")
-var j = preload("res://addons/kz_debugger/scripts/json.gd")
 
 
 func _ready():

@@ -6,11 +6,11 @@
 visible = true
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 697.5
+margin_left = 685.0
 margin_top = 350.5
-margin_right = 198.5
+margin_right = 211.0
 margin_bottom = 50.5
-rect_min_size = Vector2( 525, 300 )
+rect_min_size = Vector2( 550, 300 )
 rect_pivot_offset = Vector2( -868, -211 )
 window_title = "Dock Settings"
 resizable = true
@@ -24,7 +24,7 @@ anchor_right = 1.0
 margin_bottom = 32.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_right = 525.0
+margin_right = 550.0
 margin_bottom = 136.0
 
 [node name="labels" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
@@ -160,35 +160,34 @@ alignment = 2
 
 [node name="bottom_bar" type="HBoxContainer" parent="VBoxContainer2"]
 margin_top = 280.0
-margin_right = 525.0
+margin_right = 550.0
 margin_bottom = 300.0
 alignment = 2
 
 [node name="default" type="Button" parent="VBoxContainer2/bottom_bar"]
-margin_left = 292.0
-margin_right = 361.0
+margin_left = 317.0
+margin_right = 386.0
 margin_bottom = 20.0
 text = "DEFAULT"
 
 [node name="reset" type="Button" parent="VBoxContainer2/bottom_bar"]
-margin_left = 365.0
-margin_right = 413.0
+margin_left = 390.0
+margin_right = 438.0
 margin_bottom = 20.0
 text = "RESET"
 
 [node name="cancel" type="Button" parent="VBoxContainer2/bottom_bar"]
-margin_left = 417.0
-margin_right = 478.0
+margin_left = 442.0
+margin_right = 503.0
 margin_bottom = 20.0
 text = "CANCEL"
 
 [node name="save" type="Button" parent="VBoxContainer2/bottom_bar"]
-margin_left = 482.0
-margin_right = 525.0
+margin_left = 507.0
+margin_right = 550.0
 margin_bottom = 20.0
 text = "SAVE"
 
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/inputs/Separator" to="." method="_on_Separator_pressed"]
 [connection signal="text_changed" from="VBoxContainer/HBoxContainer/inputs/size/x_size" to="." method="_on_x_size_text_changed"]
 [connection signal="text_changed" from="VBoxContainer/HBoxContainer/inputs/size/y_size" to="." method="_on_y_size_text_changed"]
 [connection signal="text_changed" from="VBoxContainer/HBoxContainer/inputs/min_size/x_min_size" to="." method="_on_x_min_size_text_changed"]

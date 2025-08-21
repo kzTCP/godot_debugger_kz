@@ -7,11 +7,9 @@ var dock_settings_scene = preload(
 )
 
 const ui_script = preload("res://addons/kz_debugger/scenes/UI/UI.gd")
-var ui: ConsoleUIKZ
-
+var ui: UIKZD
 
 var _top_bar_h: float  = 25
-var os_size = OS.window_size
 
 
 # different
@@ -61,20 +59,20 @@ func _enter_tree():
 	
 	ui.json_init()
 	
-
-	var dock_settings = ui.json_dock_settings.read()
+	ui.settings_data = DockSettignsDataKZD.new()
+	
+	var dock_settings = ui.settings_data.read()
 	
 	if dock_settings:
-		
-		ui.options_obj = dock_settings #overwrite 
+		ui.settings_data = dock_settings # overwrite 
 		
 	else:
-		
 		# initialize data
-		ui.options_obj = DockSettingsKZD.get_default_settings()
+		ui.settings_data = DockSettignsDataKZD.new()
+		ui.settings_data.save()
 		
-	rect_min_size = VecTwo.to_vect(ui.options_obj.min_size)
-	rect_size     = VecTwo.to_vect(ui.options_obj.size)
+	rect_min_size = VecTwo.to_vect(ui.settings_data.min_size)
+	rect_size     = VecTwo.to_vect(ui.settings_data.size)
 
 	ui.structure()
 	
@@ -82,7 +80,7 @@ func _enter_tree():
 	_window_resize(rect_size)
 	
 	# update min size
-	ui.options_obj.min_size = {"x": rect_min_size.x, "y": rect_min_size.y}
+	ui.settings_data.min_size = {"x": rect_min_size.x, "y": rect_min_size.y}
 	
 	connect("resized", self, "_on_screen_resize")
 	
@@ -107,46 +105,45 @@ func _on_RichTextLabel_meta_clicked(meta_url):
 	ui.navigate_to_script(meta_url)
 
 
-func _apply_options(obj):
+func _on_save_settings(obj):
 	
-	ui._apply_options(obj)
+	ui._on_save_settings(obj)
 	
 	# size doesn't do a thing
-	rect_min_size = VecTwo.to_vect(ui.options_obj.min_size)
+	rect_min_size = VecTwo.to_vect(ui.settings_data.min_size)
 	
 	ui.reload()
-	
-	ui.json_dock_settings.obj_append(ui.options_obj)
+	 
+	ui.settings_data.save()
 	
 	#print("end _apply_options")
 
 	
 # different
 func _on_settings_pressed():
+	
 	ui.set_settings( dock_settings_scene.instance() )
 	
-
-
-func _on_sponsor_pressed():
-	ui._on_sponsor_pressed()
 
 
 func _on_dock_pressed():
 	ui.set_dock(DockTypeKZD.WINDOW)
 
 
+func _on_sponsor_pressed():
+	ui.sponsor()
 
 func _on_quit_pressed():
-	ui._on_quit_pressed()
+	ui.quit()
 
 
 func _on_refresh_pressed():
-	ui._on_refresh_pressed()
+	ui.refresh()
 	
 func _on_clear_pressed():
 	ui.clear()
 	
-	
-	
-	
-	
+# i don't think you wanna mess with this one ^_^
+#func _exit_tree():
+#	ui.quit()
+

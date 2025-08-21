@@ -1,18 +1,24 @@
 extends WindowDialog
 
 
-var Json = preload("res://addons/kz_debugger/scripts/json.gd")
-var kz_signal: kzJson
-
+const Json = preload("res://addons/kz_debugger/scripts/json.gd")
+var json_signal: kzJson # auto created when first time using plugin
+var json_default: kzJson
 
 func _init():
 	
 	#print("Debugger init")
 	#updates will be written here
-	kz_signal = Json.new( "res://addons/kz_debugger/json/signal.json")
+	json_signal = Json.new( ConfigKZD.JSON_SIGNAL_PATH)
+	json_default = Json.new( ConfigKZD.JSON_DEFAULT_PATH)
 	
 
+
 func out(array_errors: Array):
+	
+	# thi main reason export fails
+	if not json_signal.exists(): return 
+	
 	
 	# get line number
 	var stack = get_stack();	#printt("stack", stack)
@@ -26,7 +32,7 @@ func out(array_errors: Array):
 
 	# send object to plugin using json file 
 	# timer looks for new data in that one
-	kz_signal.array_append({
+	json_signal.array_append({
 		"array_errors": array_errors, 
 		"call_line": call_line,
 		"script_name": script_name,

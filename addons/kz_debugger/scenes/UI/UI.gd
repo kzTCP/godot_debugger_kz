@@ -1,12 +1,10 @@
 tool
-class_name ConsoleUIKZ extends Control
+class_name UIKZD extends Control
 
 
 var dock_type_script = load("res://addons/kz_debugger/scripts/DockType.gd")
 var json_script  = preload("res://addons/kz_debugger/scripts/json.gd")
 var kzstr_script = preload("res://addons/kz_debugger/scripts/KzStr.gd")
-
-const JSON_PATH = "res://addons/kz_debugger/json/"
 
 
 var _txt_max_width: float
@@ -26,8 +24,6 @@ var _clear_btn: TextureButton
 
 var json_goto: kzJson
 var json_default: kzJson
-var json_dock_settings: kzJson
-var json_window_settings: kzJson
 var json_dock: kzJson
 var json_signal: kzJson
 
@@ -35,7 +31,7 @@ var settings: DockSettingsKZD
 var labelText: TextRTLKZ
 
 
-var options_obj: Dictionary = {}
+var settings_data: DockSettignsDataKZD
 	
 
 func _init(
@@ -57,9 +53,8 @@ func _init(
 
 func structure():
 
-	
-	_top_bar_col.color = Color(options_obj.top_bar_color)
-	_src_hexa_color = Color(options_obj.src_color).to_html()
+	_top_bar_col.color = Color(settings_data.top_bar_color)
+	_src_hexa_color = Color(settings_data.src_color).to_html()
 	_RichTextLabel.bbcode_enabled = true
 	_RichTextLabel.selection_enabled = true
 	_RichTextLabel.scroll_following = true
@@ -67,21 +62,21 @@ func structure():
 	_copyright = "[center][color=gray]{0}[/color][/center]\n".format(
 		["---- kzCode_ Debugger ----"]
 	)
-	_RichTextLabel.bbcode_text = _copyright
-		
-	labelText = TextRTLKZ.new(_RichTextLabel)
 	
+	clear()
+	
+	labelText = TextRTLKZ.new(_RichTextLabel)
+		
 	if ConfigKZD.DEBUG: print("structure")
 	
 
 func json_init():
 	
-	json_goto = kzJson.new(JSON_PATH + "goto.json")
-	json_default = kzJson.new(JSON_PATH + "default.json")
-	json_dock = kzJson.new(JSON_PATH+  "dock.json")
-	json_signal = kzJson.new(JSON_PATH + "signal.json")
-	json_dock_settings  = kzJson.new(JSON_PATH + "dock_settings.json")
-	json_window_settings  = kzJson.new(JSON_PATH + "window_settings.json")
+	json_goto 		= kzJson.new(ConfigKZD.JSON_PATH + "goto.json")
+	json_default 	= kzJson.new(ConfigKZD.JSON_PATH + "default.json")
+	json_dock 		= kzJson.new(ConfigKZD.JSON_PATH + "dock.json")
+	json_signal 	= kzJson.new(ConfigKZD.JSON_PATH + "signal.json")
+
 	
 
 var is_new_log: bool = false # clear text after each test launch
@@ -121,10 +116,10 @@ func out(errors_obj: Dictionary):
 
 	#print_debug(script_example)
 
-	var dashs = labelText.get_dashs(script_example)
+	var dashs = ""
 	#var dashs = get_dashs("")
-	if not options_obj.use_separator:
-		dashs = ""
+	if  settings_data.use_separator:
+		dashs = labelText.get_dashs(script_example)
 
 	if is_new_log: # after each new scene open
 		_RichTextLabel.bbcode_text = ""
@@ -185,32 +180,36 @@ func navigate_to_script(url):
 	)
 
 
+func _on_options_menu_close(): settings = null
 
-func _apply_options(obj):
-	
-	settings = null
-	options_obj = obj
-	
-	_top_bar_col.color = Color( options_obj.top_bar_color )
-	_src_hexa_color = Color( options_obj.src_color ).to_html()
-	
 
 func settings_are_open(): return settings != null
 
 
-func _on_options_menu_close(): settings = null
+func _on_save_settings(data: Dictionary):
+	
+	settings = null
+	if _debugger is WindowDialog:
+		settings_data = WindowSettingsDataKZD.new(data)
+	else:
+		settings_data = DockSettignsDataKZD.new(data)
+	
+	_top_bar_col.color = Color( settings_data.top_bar_color )
+	
+	_src_hexa_color = Color( settings_data.src_color ).to_html()
 
 
-func set_settings(instance: DockSettingsKZD):
+func set_settings( instance: DockSettingsKZD ):
 	
 	if settings_are_open(): return 
 	
 	settings = instance
 	
 	settings.rect_position = rect_position
-	settings.connect(
-		"_on_apply_btn_pressed", _debugger, "_apply_options"
-	)
+	
+	# look for func name in Dock and Window code
+	settings.connect("save", _debugger, "_on_save_settings")
+	
 	settings.connect(
 		"tree_exiting", self, "_on_options_menu_close"
 	)
@@ -222,13 +221,13 @@ func set_settings(instance: DockSettingsKZD):
 	
 	
 	# save current window size
-	options_obj.size = _debugger.rect_size
-
-	settings.init(options_obj)
+	settings_data.size = VecTwo.to_obj( _debugger.rect_size )
+	
+	settings.init(settings_data)
 
 	
 
-func _on_sponsor_pressed():
+func sponsor():
 	OS.shell_open("https://kztcp.github.io/me/me.html")
 
 
@@ -241,7 +240,7 @@ func set_dock(dock_type: String):
 	json_dock.write({"type": dock_type})
 	json_default.obj_append({"dock_type": dock_type})
 
-	json_signal.write([]) # clear json file
+	json_signal.clear()
 	
 	# save thing after docking
 	for obj_errors in _list_errors:
@@ -249,21 +248,22 @@ func set_dock(dock_type: String):
 		
 
 
-func _on_quit_pressed():
+func quit():
 	_debugger.queue_free()
 
 
-func _on_refresh_pressed():
+func refresh():
 	
 	var obj = {"plugin": {"refresh": true}}
 	if not json_default:
-		json_default = json_script.new(JSON_PATH + "default.json")
+		json_default = json_script.new(ConfigKZD.JSON_PATH + "default.json")
 	
 	json_default.obj_append(obj)
 	_debugger.queue_free()
 	
 	
 func clear():
+	
 	_RichTextLabel.bbcode_text = _copyright
 	_list_errors = []
 

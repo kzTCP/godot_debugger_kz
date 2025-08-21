@@ -1,15 +1,14 @@
 tool
 class_name DockSettingsKZD extends WindowDialog
 
+
 var msgBoxScene = preload(
 	"res://addons/kz_debugger/scenes/dialog/warningDialog.tscn"
 )
 
+var msgBox: kz_msgBox
+var _settings_data: DockSettignsDataKZD
 
-var use_separator : bool = false
-var _initial_settings: Dictionary = {}
-var win_size: Vector2
-var _size: Vector2 = Vector2(525, 300)
 
 var _check_box: CheckBox 
 var _size_x: LineEdit
@@ -19,17 +18,8 @@ var _min_size_y: LineEdit
 var _top_bar_color: ColorPickerButton
 var _source_color: ColorPickerButton
 
-var msgBox: kz_msgBox
 
-
-static func get_default_settings() -> Dictionary:
-	return {
-		"use_separator": true,
-		"top_bar_color": "#999999",
-		"src_color": "#faf223",
-		"size": VecTwo.to_obj(ConfigKZD.DOCK_SIZE),
-		"min_size": VecTwo.to_obj(ConfigKZD.DOCK_SIZE),
-	}
+const SIZE: Vector2 = Vector2(550, 300)
 
 
 # Called when the node enters the scene tree for the first time.
@@ -61,18 +51,15 @@ func _enter_tree():
 	_min_size_y = $VBoxContainer/HBoxContainer/inputs/min_size/y_min_size
 	
 	
-	rect_size = _size
-	rect_min_size = _size
+	rect_size = SIZE
+	rect_min_size = SIZE
 	
-	win_size = OS.window_size
+	rect_position = (OS.window_size - rect_size)/2
 	
-	rect_position = (win_size - rect_size)/2
+	_settings_data = DockSettignsDataKZD.new()
 	
 	if ConfigKZD.DEBUG: print(_check_box, _top_bar_color)
 
-	
-
-func _on_Separator_pressed(): use_separator = _check_box.pressed
 
 
 func _get_settings_error_msg() -> String:
@@ -82,7 +69,7 @@ func _get_settings_error_msg() -> String:
 		int(_min_size_y.text) 
 	)
 	
-	var init_min_size = VecTwo.to_vect(_initial_settings.min_size)
+	var init_min_size = VecTwo.to_vect(_settings_data.min_size)
 	
 	var new_size = Vector2(
 		int(_size_x.text),
@@ -114,7 +101,7 @@ func _get_settings_error_msg() -> String:
 
 
 
-signal _on_apply_btn_pressed
+signal save
 func _on_save_pressed():
 
 	var error = _get_settings_error_msg()
@@ -125,7 +112,8 @@ func _on_save_pressed():
 		msgBox.show()
 		return
 
-	emit_signal("_on_apply_btn_pressed", object())
+	# save settings
+	emit_signal("save", save_settings().object())
 	queue_free()
 
 
@@ -136,41 +124,49 @@ func _on_cancel_pressed():
 
 
 func _on_default_pressed():
-	init(
-		get_default_settings()
-	)
+	
+	init(DockSettignsDataKZD.new())
 	
 	
 	
-func set_settings(obj: Dictionary):
+func apply_settings(data: DockSettignsDataKZD):
 	
-	_check_box.pressed = obj["use_separator"]
-	_size_x.text = str(obj["size"].x)
-	_size_y.text = str(obj["size"].y)
-	_min_size_x.text = str(obj["min_size"].x)
-	_min_size_y.text = str(obj["min_size"].y)
-	_top_bar_color.color = Color(obj["top_bar_color"])
-	_source_color.color = Color(obj["src_color"])	
+	_check_box.pressed = data.use_separator
+	_size_x.text = str(data.size.x)
+	_size_y.text = str(data.size.y)
+	_min_size_x.text = str(data.min_size.x)
+	_min_size_y.text = str(data.min_size.y)
+	_top_bar_color.color = Color(data.top_bar_color )
+	_source_color.color = Color(data.src_color )
 	
-func object():
 	
-	return {
-		"use_separator": _check_box.pressed,
-		"size": {"x": _size_x.text, "y": _size_y.text },
-		"min_size": {"x": _min_size_x.text, "y": _min_size_y.text },
-		"top_bar_color": _top_bar_color.color,
-		"src_color": _source_color.color,
-	}	
+func save_settings() -> DockSettignsDataKZD:
+	
+	_settings_data.use_separator = _check_box.pressed
+	_settings_data.size = {
+		"x": _size_x.text,
+		"y": _size_y.text
+	}
+	_settings_data.min_size = {
+		"x": _min_size_x.text,
+		"y": _min_size_y.text
+	}
+	_settings_data.top_bar_color = _top_bar_color.color.to_html()
+	_settings_data.src_color = _source_color.color.to_html()
+	
+	return _settings_data
+	
+	
+
+func init(data: DockSettignsDataKZD):
+	
+	apply_settings(data)
+	# save initial settings
+	save_settings()
 	
 	
 func _on_reset_pressed():
-	set_settings(_initial_settings)
-
-
-func init(obj):
-	
-	set_settings(obj)
-	_initial_settings = object() # save data
+	apply_settings(_settings_data)
 
 
 func only_numbers(string) -> String:
@@ -187,7 +183,7 @@ func only_numbers(string) -> String:
 func handle_input(input: LineEdit, text: String):
 	if not str(text).is_valid_integer():
 		input.text = only_numbers(text)
-		
+
 
 func _on_x_size_text_changed(new_text):
 	handle_input(_size_x, new_text)
@@ -203,5 +199,8 @@ func _on_x_min_size_text_changed(new_text):
 
 func _on_y_min_size_text_changed(new_text):
 	handle_input(_min_size_y, new_text)
+
+
+
 
 

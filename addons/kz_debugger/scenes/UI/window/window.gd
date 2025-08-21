@@ -6,8 +6,8 @@ var window_settings_scene = preload(
 	"res://addons/kz_debugger/scenes/settings/WindowSettings/WindowSettings.tscn"
 )
 
-const ui_script = preload("res://addons/kz_debugger/scenes/UI/UI.gd")
-var ui: ConsoleUIKZ
+var ui_script = load("res://addons/kz_debugger/scenes/UI/UI.gd")
+var ui: UIKZD
 
 
 var _top_bar_h: float  = 25
@@ -47,13 +47,11 @@ func _window_resize(window_size: Vector2):
 
 func _update_sizes():
 	
-	ui.options_obj["min_size"] = {"x": rect_min_size.x, "y": rect_min_size.y}
-	ui.options_obj["position"] = {"x": rect_position.x, "y": rect_position.y}
-	ui.options_obj["size"] = {"x": rect_size.x, "y": rect_size.y}
+	ui.settings_data.min_size	= VecTwo.to_obj(rect_min_size)
+	ui.settings_data.size 		= VecTwo.to_obj(rect_size)
+	ui.settings_data.position	= VecTwo.to_obj(rect_position)
 	
 
-
-var _width_to_remove
 func _enter_tree():
 	
 	if ConfigKZD.DEBUG: printt("->\tplug_debug_win.dg _enter_tree")
@@ -73,38 +71,34 @@ func _enter_tree():
 	
 	ui.json_init()
 	
-	var window_settings = ui.json_window_settings.read()
+	ui.settings_data = WindowSettingsDataKZD.new()
+	
+	var window_settings = ui.settings_data.read()
 	
 	if ConfigKZD.DEBUG: printt("window_settings", window_settings)
 	
-	
 	if window_settings:
 		
-		ui.options_obj = window_settings
+		ui.settings_data = window_settings
 		
 	else:
 		
 		# initialize data
-		ui.options_obj = WindowSettingsKZD.get_default_settings()
+		ui.settings_data = WindowSettingsDataKZD.new()
+		ui.settings_data.save()
 		
-		
-	rect_size =  VecTwo.to_vect(ui.options_obj.size)
-	rect_min_size =  VecTwo.to_vect(ui.options_obj.min_size)
-	rect_position =  VecTwo.to_vect(ui.options_obj.position)
+	rect_min_size =  VecTwo.to_vect(ui.settings_data.min_size)
+	rect_size =  VecTwo.to_vect(ui.settings_data.size)
+	rect_position =  VecTwo.to_vect(ui.settings_data.position)
 
 	ui.structure()
 	
-	_width_to_remove = ui.labelText.size("------").x 
-	
 	_is_ready = true
-	_window_resize(rect_size)
 	
-	#update resolution
-	_update_sizes()
+	_window_resize(rect_size)
 	
 	connect("resized", self, "_on_screen_resize")
 	
-
 
 
 func _on_screen_resize():
@@ -121,7 +115,7 @@ func _on_screen_resize():
 		
 	_update_sizes()
 	
-	ui.settings.init(ui.options_obj)# initialize potions
+	ui.settings.init(ui.settings_data) # initialize potions
 
 
 
@@ -132,30 +126,26 @@ func _on_RichTextLabel_meta_clicked(meta_url):
 func _save_settings():
 	
 	_update_sizes()
+	
 	#save new settings
-	ui.json_window_settings.obj_append(ui.options_obj)
+	ui.settings_data.save()
+	
 	
 
-func _apply_options(obj):
+func _on_save_settings(obj):
 	
-	ui._apply_options(obj)
+	ui._on_save_settings(obj)
 	
-	rect_min_size = Vector2(
-		int(ui.options_obj.min_size.x), 
-		int(ui.options_obj.min_size.y)
-	)
+	rect_min_size = VecTwo.to_vect(ui.settings_data.min_size)
 	
-	
-	var win_size = Vector2(
-		int(ui.options_obj.size.x),
-		int(ui.options_obj.size.y)
-	)
+	var win_size = VecTwo.to_vect(ui.settings_data.size)
 	
 	rect_size = win_size
 	
 	_window_resize(win_size)
 	
-	if ui.options_obj.use_snap: snap_to(ui.options_obj.snap)
+	if ui.settings_data.use_snap: 
+		snap_to(ui.settings_data.snap)
 	
 	ui.reload()
 	
@@ -177,9 +167,9 @@ func snap_to(direction):
 	
 	if ConfigKZD.DEBUG: print("window.gd snap_to")
 		
-	var _snap_percentage = int(ui.options_obj.snap_percentage)
+	var _snap_percentage = int(ui.settings_data.snap_percentage)
 	
-	var _snap_vec = VecTwo.to_vect(ui.options_obj.snap_vector)
+	var _snap_vec = VecTwo.to_vect(ui.settings_data.snap_vector)
 	
 	if direction == SnapKZD.BOTTOM:
 		
@@ -228,36 +218,40 @@ func snap_to(direction):
 
 func _on_save_pos_pressed():
 	
-	_save_settings()
-
+	_update_sizes()
+	
+	#forgot to save
+	ui.settings_data.save()
+	
 
 func _on_resnap_pressed():
 	
-	if ui.options_obj.use_snap:
-		snap_to(ui.options_obj.snap)
+	if ui.settings_data.use_snap:
+		snap_to(ui.settings_data.snap)
 	else:
-		rect_min_size = ui.options_obj["min_size"]
-		rect_position = ui.options_obj["position"]
-		rect_size     = ui.options_obj["size"]
-
-
-func _on_sponsor_pressed():
-	ui._on_sponsor_pressed()
+		rect_min_size = VecTwo.to_vect(ui.settings_data.min_size)
+		rect_position = VecTwo.to_vect(ui.settings_data.position)
+		rect_size     = VecTwo.to_vect(ui.settings_data.size)
 
 
 func _on_dock_pressed():
+	
 	ui.set_dock(DockTypeKZD.CONTROL)
+	
+	
+func _on_sponsor_pressed():
+	ui.sponsor()
 
 
 func _on_quit_pressed():
-	ui._on_quit_pressed()
+	ui.quit()
 
 
 func _on_refresh_pressed():
-	ui._on_refresh_pressed()
+	ui.refresh()
 
 
 func _on_clear_pressed():
 	ui.clear()
-	
+
 	

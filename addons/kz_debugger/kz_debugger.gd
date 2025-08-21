@@ -25,7 +25,7 @@ const AUTOLOAD_NAME = "console"# auto load scene as Debugger
 var interface: EditorInterface
 
 var json: kzJson
-var kz_signal: kzJson
+var json_signal: kzJson
 var json_goto: kzJson
 var json_dock: kzJson
 var json_default: kzJson
@@ -70,17 +70,20 @@ func _enter_tree():
 	
 	interface = get_editor_interface()
 	
-	kz_signal = Json.new(_json_path + "signal.json")
+	json_signal = Json.new(_json_path + "signal.json")
 	json_goto = Json.new(_json_path + "goto.json")
 	json_dock = Json.new(_json_path + "dock.json")
+	
+	# auto created by the first dock
 	json_default = Json.new(_json_path + "default.json")
 	
 	json_dock.write({})
-	kz_signal.write({})
+	json_signal.write({})
+	json_goto.write({})
 
 	timer = Timer.new()
 	timer.autostart = true
-	timer.wait_time = 0.25
+	timer.wait_time = 0.25 # refresh time in seconds
 	timer.connect("timeout", self, "_signal_refrech_time_out")
 	if not stop_signal: add_child(timer)
 
@@ -101,19 +104,21 @@ func _enter_tree():
 var scene_is_playing = false
 func _get_txt_to_print_from_scene():
 	
-	if not kz_signal: return 
+	if not json_signal: return 
 	
-	var data = kz_signal.read()
-	var array = data if data is Array else [data]
-	
-	if not data: return # no data to work with
+	var array = json_signal.array_read()
+#	print(array)
+	if not array: return # no data to work with
 	
 	dock.ui.is_new_log = not scene_is_playing
+
 	for obj in array:
+#		print(obj)
 		dock.ui.out(obj)
 		scene_is_playing = true
 		dock.ui.is_new_log = not scene_is_playing
-		kz_signal.array_remove(obj)
+		json_signal.array_remove(obj)
+
 
 
 func _goto_script_line(error_path: String, line_error: int):
@@ -138,12 +143,10 @@ func _script_navigation_process():
 	
 	if not json_goto: return
 		
-	var data = json_goto.read()
+	var array_goto = json_goto.array_read()
 	
-	if not data: return # no data to work with
+	if not array_goto: return # no data to work with
 		
-	var array_goto =  data if data is Array else [data]
-
 	for obj_goto in array_goto:
 		var url = obj_goto["url"]
 		var line = obj_goto["line"]
@@ -193,6 +196,8 @@ func _signal_refrech_time_out():
 	
 	_script_navigation_process()
 	
+	# must be disabled when exporting game
+
 	if interface.is_playing_scene():
 		
 		_get_txt_to_print_from_scene()
